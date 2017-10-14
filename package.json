@@ -1,0 +1,21 @@
+{
+  "name": "node-auth-server",
+  "version": "1.0.0",
+  "description": "Node based authentication server",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "mongoose": "^4.12.1",
+    "morgan": "^1.9.0",
+    "nodemon": "^1.12.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": ["nodejs", "mongo", "auth", "authentication"],
+  "author": "Dawid Hen",
+  "license": "MIT"
+}
