@@ -1,6 +1,19 @@
+import jwt from 'jwt-simple';
 import UserModel from '../models/user';
 
+import config from '../config';
+
 export default class User {
+  constructor() {
+    this.createUser = this.createUser.bind(this);
+  }
+
+  // Create token for user using JWT-Simple
+  tokenForUser(user) {
+    const timeStamp = new Date().getTime();
+    return jwt.encode({ sub: user.id, iat: timeStamp }, config.secret);
+  }
+
   createUser(req, res, next) {
     const email = req.body.email;
     const password = req.body.password;
@@ -20,9 +33,7 @@ export default class User {
 
       // If a user with email does exist, return an error
       if (existingUser) {
-        return res
-          .status(422)
-          .send({ error: 'Email is already used' });
+        return res.status(422).send({ error: 'Email is already used' });
       }
 
       // If a user with email does NOT exist, create and save user record
@@ -37,7 +48,7 @@ export default class User {
         }
 
         // Respond to request indicating the user was created
-        res.json({ sucess: true });
+        res.json({ token: this.tokenForUser(user) });
       });
     });
   }
