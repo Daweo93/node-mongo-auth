@@ -1,10 +1,11 @@
-const express = require('express');
-const http = require('http');
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
+import express from 'express';
+import http from 'http';
+import bodyParser from 'body-parser';
+import morgan from 'morgan';
+import mongoose from 'mongoose';
+import router from './router';
+
 const app = express();
-const router = require('./router');
-const mongoose = require('mongoose');
 
 // DB setup
 mongoose.connect('mongodb://localhost/auth', {
@@ -14,7 +15,7 @@ mongoose.connect('mongodb://localhost/auth', {
 // App setup
 app.use(morgan('combined'));
 app.use(bodyParser.json({ type: '*/*' }));
-router(app);
+app.use('/', router);
 
 // Server setup
 const port = process.env.PORT || 3090;

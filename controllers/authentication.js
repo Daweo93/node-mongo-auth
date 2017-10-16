@@ -1,33 +1,44 @@
-const User = require('../models/user');
+import UserModel from '../models/user';
 
-exports.signup = function(req, res, next) {
-  const email = req.body.email;
-  const password = req.body.password;
+export default class User {
+  createUser(req, res, next) {
+    const email = req.body.email;
+    const password = req.body.password;
 
-  // See if a user with the given email exist
-  User.findOne({ email: email }, function(err, existingUser) {
-    if (err) {
-      return next(err);
+    // Check if password and email is provided
+    if (!email || !password) {
+      return res
+        .status(422)
+        .send({ error: 'You must provide email and password' });
     }
 
-    // If a user with email does exist, return an error
-    if (existingUser) {
-      return res.status(422).send({ error: 'Email is already used' });
-    }
-
-    // If a user with email does NOT exist, create and save user record
-    const user = new User({
-      email: email,
-      password: password
-    });
-
-    user.save(function(err) {
+    // See if a user with the given email exist
+    UserModel.findOne({ email: email }, (err, existingUser) => {
       if (err) {
         return next(err);
       }
 
-      // Respond to request indicating the user was created
-      res.json({ sucess: true });
+      // If a user with email does exist, return an error
+      if (existingUser) {
+        return res
+          .status(422)
+          .send({ error: 'Email is already used' });
+      }
+
+      // If a user with email does NOT exist, create and save user record
+      const user = new UserModel({
+        email: email,
+        password: password
+      });
+
+      user.save(err => {
+        if (err) {
+          return next(err);
+        }
+
+        // Respond to request indicating the user was created
+        res.json({ sucess: true });
+      });
     });
-  });
-};
+  }
+}

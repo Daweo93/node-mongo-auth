@@ -1,5 +1,9 @@
-const Authentication = require('./controllers/authentication');
+import express from 'express';
+import Authentication from './controllers/authentication';
 
-module.exports = function(app) {
-  app.post('/signup', Authentication.signup);
-};
+const router = express.Router();
+const authentication = new Authentication();
+
+router.post('/signup', authentication.createUser);
+
+export default router;

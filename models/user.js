@@ -1,4 +1,5 @@
-const mongose = require('mongoose');
+import mongose from 'mongoose';
+import bcrypt from 'bcrypt-nodejs';
 const Schema = mongose.Schema;
 
 // Define user model
@@ -11,8 +12,28 @@ const userSchema = new Schema({
   password: String
 });
 
-// Create the model class
-const UserModel = mongose.model('user', userSchema);
+// On save hook, encrypt password
+userSchema.pre('save', function(next) {
+  const user = this;
 
-// Export the model
-module.exports = UserModel;
+  // generate salt 
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) {
+      return next(err);
+    }
+
+    // hash (encrypt) password using salt
+    bcrypt.hash(user.password, salt, null, (err, hash) => {
+      if (err) {
+        return next(err);
+      }
+
+      // overwrite plain text password with encyrpted password
+      user.password = hash;
+      next();
+    });
+  });
+});
+
+// Create the model class and the model
+module.exports = mongose.model('user', userSchema);
