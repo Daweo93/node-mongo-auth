@@ -5,7 +5,8 @@ import config from '../config';
 
 export default class User {
   constructor() {
-    this.createUser = this.createUser.bind(this);
+    this.signUp = this.signUp.bind(this);
+    this.signIn = this.signIn.bind(this);
   }
 
   // Create token for user using JWT-Simple
@@ -14,7 +15,7 @@ export default class User {
     return jwt.encode({ sub: user.id, iat: timeStamp }, config.secret);
   }
 
-  createUser(req, res, next) {
+  signUp(req, res, next) {
     const email = req.body.email;
     const password = req.body.password;
 
@@ -51,5 +52,11 @@ export default class User {
         res.json({ token: this.tokenForUser(user) });
       });
     });
+  }
+
+  signIn(req, res, next) {
+    // User has already had their email and password auth'd
+    // We just need to give him a token
+    res.json({ token: this.tokenForUser(req.user) });
   }
 }
