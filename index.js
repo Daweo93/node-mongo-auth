@@ -3,12 +3,13 @@ import http from 'http';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import config from './config';
 import router from './router';
 
 const app = express();
 
 // DB setup
-mongoose.connect('mongodb://localhost/auth', {
+mongoose.connect(config.database, {
   useMongoClient: true
 });
 
@@ -18,7 +19,7 @@ app.use(bodyParser.json({ type: '*/*' }));
 app.use('/', router);
 
 // Server setup
-const port = process.env.PORT || 3090;
+const port = process.env.PORT || config.appDefaultPort;
 const server = http.createServer(app);
 server.listen(port);
 console.log('Server is listining on port: ' + port);
